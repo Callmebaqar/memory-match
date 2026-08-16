@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
+    min-height: 100vh;
+    color: #fff;
+    padding: 24px;
+    touch-action: manipulation;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  header p {
+    margin-top: 6px;
+    opacity: 0.9;
+    font-size: 1rem;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.97);
+    color: #1a1a2e;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    animation: slide-in 0.4s ease backwards;
+  }
+
+  @keyframes slide-in {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: #444;
+  }
+
+  .field label .req {
+    color: #e53935;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #e2e0ee;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #faf9ff;
+    color: #1a1a2e;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.18);
+    background: #fff;
+  }
+
+  .field.invalid input,
+  .field.invalid select {
+    border-color: #e53935;
+    background: #fff5f5;
+  }
+
+  .field .error {
+    display: none;
+    color: #e53935;
+    font-size: 0.82rem;
+    margin-top: 5px;
+  }
+
+  .field.invalid .error {
+    display: block;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    flex: 1;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+  }
+
+  .btn-redo {
+    background: #eceaf6;
+    color: #333;
+  }
+
+  .btn-redo:hover {
+    background: #ffd23f;
+    color: #1a1a2e;
+  }
+
+  .success {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #e8f7ee;
+    border: 2px solid #4caf50;
+    color: #2e7d32;
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-weight: 600;
+    margin-top: 18px;
+    animation: slide-in 0.3s ease backwards;
+  }
+
+  .success.show {
+    display: flex;
+  }
+
+  .registrations {
+    margin-top: 24px;
+  }
+
+  .registrations h2 {
+    font-size: 1.3rem;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 10px;
+  }
+
+  .reg-item {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    animation: slide-in 0.3s ease backwards;
+    word-break: break-word;
+  }
+
+  .reg-item .name {
+    font-weight: bold;
+    font-size: 1.05rem;
+  }
+
+  .reg-item .meta {
+    font-size: 0.9rem;
+    opacity: 0.92;
+    margin-top: 3px;
+    line-height: 1.5;
+  }
+
+  .reg-item .badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: bold;
+    background: rgba(255, 210, 63, 0.25);
+    color: #ffd23f;
+    border: 1px solid #ffd23f;
+  }
+
+  .clear-row {
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  .clear-row button {
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    font-size: 0.85rem;
+    padding: 10px 18px;
+    flex: none;
+  }
+
+  .clear-row button:hover {
+    background: #f44336;
+    color: #fff;
+  }
+
+  @media (max-width: 520px) {
+    body {
+      padding: 14px;
+    }
+
+    header h1 {
+      font-size: 1.7rem;
+    }
+
+    .card {
+      padding: 20px;
+      border-radius: 16px;
+    }
+
+    .btn-row {
+      flex-direction: column;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>🎓 Student Registration</h1>
+      <p>Fill in the details to register</p>
+    </header>
+
+    <div class="card">
+      <form id="reg-form" novalidate>
+        <div class="field" data-field="name">
+          <label for="name">Full Name <span class="req">*</span></label>
+          <input type="text" id="name" name="name" placeholder="e.g. John Smith" maxlength="80" autocomplete="name">
+          <div class="error">Please enter your full name.</div>
+        </div>
+
+        <div class="field" data-field="email">
+          <label for="email">Email <span class="req">*</span></label>
+          <input type="email" id="email" name="email" placeholder="e.g. john@example.com" maxlength="100" autocomplete="email">
+          <div class="error">Please enter a valid email address.</div>
+        </div>
+
+        <div class="field" data-field="phone">
+          <label for="phone">Phone <span class="req">*</span></label>
+          <input type="tel" id="phone" name="phone" placeholder="e.g. 0300-1234567" maxlength="20" autocomplete="tel">
+          <div class="error">Please enter a valid phone number (digits, spaces, +, -).</div>
+        </div>
+
+        <div class="field" data-field="course">
+          <label for="course">Course <span class="req">*</span></label>
+          <select id="course" name="course">
+            <option value="">Select a course...</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Mobile App Development">Mobile App Development</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Graphic Design">Graphic Design</option>
+            <option value="English Language">English Language</option>
+            <option value="Accounting">Accounting</option>
+          </select>
+          <div class="error">Please choose a course.</div>
+        </div>
+
+        <div class="btn-row">
+          <button type="submit" class="btn-submit">✅ Submit</button>
+          <button type="button" class="btn-redo" id="redo-btn">🔄 Redo</button>
+        </div>
+      </form>
+
+      <div class="success" id="success-msg">🎉 Registration successful! Welcome, <span id="success-name"></span>.</div>
+    </div>
+
+    <div class="registrations">
+      <h2>📋 Registered Students</h2>
+      <div id="reg-list"></div>
+      <div class="clear-row">
+        <button id="clear-btn">🗑️ Clear All</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const STORAGE_KEY = "student-registrations";
+
+let students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+const form = document.getElementById("reg-form");
+const redoBtn = document.getElementById("redo-btn");
+const successMsg = document.getElementById("success-msg");
+const successName = document.getElementById("success-name");
+const regList = document.getElementById("reg-list");
+const clearBtn = document.getElementById("clear-btn");
+
+const fields = ["name", "email", "phone", "course"];
+
+function validateField(field) {
+  const el = document.getElementById(field);
+  const wrapper = document.querySelector('.field[data-field="' + field + '"]');
+  const value = el.value.trim();
+
+  if (!value) {
+    wrapper.classList.add("invalid");
+    return false;
+  }
+
+  if (field === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) {
+    wrapper.classList.add("invalid");
+    return false;
+  }
+
+  if (field === "phone" && !/^[0-9+\-() ]{7,20}$/.test(value)) {
+    wrapper.classList.add("invalid");
+    return false;
+  }
+
+  wrapper.classList.remove("invalid");
+  return true;
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+}
+
+function renderList() {
+  regList.innerHTML = "";
+  if (!students.length) {
+    regList.innerHTML = '<p class="reg-item" style="opacity:0.9">No students registered yet.</p>';
+    return;
+  }
+  students.forEach((s) => {
+    const div = document.createElement("div");
+    div.className = "reg-item";
+    div.innerHTML =
+      '<div class="name">' + escapeHtml(s.name) + '</div>' +
+      '<div class="meta">📧 ' + escapeHtml(s.email) + '<br>📞 ' + escapeHtml(s.phone) + '</div>' +
+      '<span class="badge">📘 ' + escapeHtml(s.course) + '</span>';
+    regList.appendChild(div);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function clearErrors() {
+  fields.forEach((f) => document.querySelector('.field[data-field="' + f + '"]').classList.remove("invalid"));
+}
+
+function resetForm() {
+  form.reset();
+  clearErrors();
+  successMsg.classList.remove("show");
+  document.getElementById("name").focus();
+}
+
+fields.forEach((f) => {
+  const el = document.getElementById(f);
+  el.addEventListener("input", () => {
+    document.querySelector('.field[data-field="' + f + '"]').classList.remove("invalid");
+  });
+});
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  clearErrors();
+
+  const valid = fields.map(validateField).every(Boolean);
+  if (!valid) {
+    const firstInvalid = document.querySelector(".field.invalid input, .field.invalid select");
+    if (firstInvalid) firstInvalid.focus();
+    return;
+  }
+
+  const student = {
+    name: document.getElementById("name").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    course: document.getElementById("course").value
+  };
+
+  students.unshift(student);
+  save();
+  renderList();
+
+  successName.textContent = student.name;
+  successMsg.classList.add("show");
+  form.reset();
+  clearErrors();
+});
+
+redoBtn.addEventListener("click", resetForm);
+
+clearBtn.addEventListener("click", () => {
+  if (students.length && confirm("Clear all registered students?")) {
+    students = [];
+    save();
+    renderList();
+  }
+});
+
+renderList();
+</script>
+</body>
+</html>
