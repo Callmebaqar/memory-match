@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Scientific Calculator</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", "Times New Roman", serif;
+    background: linear-gradient(135deg, #1a0f2e, #3a1d6e, #6b2fa0);
+    background-size: 400% 400%;
+    animation: gradient 14s ease infinite;
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 18px rgba(255, 215, 0, 0.6), 2px 2px 6px rgba(0, 0, 0, 0.5);
+    margin-bottom: 14px;
+    text-align: center;
+    color: #ffd966;
+  }
+
+  h1 span {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #f4e8c1;
+    text-shadow: none;
+    margin-top: 4px;
+  }
+
+  .calculator {
+    width: 100%;
+    max-width: 400px;
+    background: linear-gradient(160deg, #2d1b4e, #1a0f2e);
+    border: 2px solid #d4af37;
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow:
+      0 0 25px rgba(212, 175, 55, 0.35),
+      0 14px 40px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .crown {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .display {
+    background: linear-gradient(180deg, #0c0618, #1a1030);
+    border: 1px solid #d4af37;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    text-align: right;
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    word-break: break-all;
+    font-family: "Consolas", "Courier New", monospace;
+  }
+
+  .expression {
+    font-size: 1rem;
+    color: #e6c96b;
+    min-height: 20px;
+    opacity: 0.9;
+  }
+
+  .result {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #fff7e0;
+    text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  button {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 1.05rem;
+    padding: 12px 0;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #3b2570, #241543);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.08s ease, filter 0.15s ease, border-color 0.15s ease;
+  }
+
+  button:hover {
+    filter: brightness(1.25);
+    border-color: #d4af37;
+  }
+
+  button:active {
+    transform: scale(0.93);
+  }
+
+  .fn {
+    background: linear-gradient(180deg, #4a3a10, #2e2408);
+    color: #ffd966;
+    font-size: 0.95rem;
+  }
+
+  .op {
+    background: linear-gradient(180deg, #5a1d4d, #381226);
+    color: #f4a4d4;
+  }
+
+  .equals {
+    background: linear-gradient(180deg, #d4af37, #a8841f);
+    color: #1a0f2e;
+    font-weight: 700;
+    font-size: 1.3rem;
+    border: none;
+  }
+
+  .equals:hover {
+    filter: brightness(1.15);
+  }
+
+  .clear {
+    background: linear-gradient(180deg, #7a1d1d, #4a1010);
+    color: #ffb3b3;
+  }
+
+  .warning {
+    color: #ffb3b3;
+    font-size: 0.85rem;
+    min-height: 18px;
+    margin-top: 10px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <h1>Royal Calculator<span>Scientific Edition</span></h1>
+
+  <div class="calculator">
+    <div class="crown">&#128081;</div>
+    <div class="display">
+      <div class="expression" id="expression"></div>
+      <div class="result" id="result">0</div>
+    </div>
+
+    <div class="buttons">
+      <button class="clear" id="clear">AC</button>
+      <button class="clear" id="backspace">&#9003;</button>
+      <button class="op" data-op="(">(</button>
+      <button class="op" data-op=")">)</button>
+      <button class="op" data-op="&#247;">&#247;</button>
+
+      <button class="fn" data-fn="sin">sin</button>
+      <button class="fn" data-fn="cos">cos</button>
+      <button class="fn" data-fn="tan">tan</button>
+      <button class="fn" data-fn="ln">ln</button>
+      <button class="fn" data-fn="log">log</button>
+
+      <button class="fn" data-fn="&#8730;">&#8730;</button>
+      <button class="fn" data-fn="x^y">x&#8319;</button>
+      <button class="fn" data-fn="x&#178;">x&#178;</button>
+      <button class="fn" data-fn="n!">n!</button>
+      <button class="fn" data-fn="&#960;">&#960;</button>
+
+      <button class="fn" data-fn="e">e</button>
+      <button data-num="7">7</button>
+      <button data-num="8">8</button>
+      <button data-num="9">9</button>
+      <button class="op" data-op="&#215;">&#215;</button>
+
+      <button data-num="4">4</button>
+      <button data-num="5">5</button>
+      <button data-num="6">6</button>
+      <button class="op" data-op="-">-</button>
+      <button data-num="1">1</button>
+
+      <button data-num="2">2</button>
+      <button data-num="3">3</button>
+      <button class="op" data-op="+">+</button>
+      <button class="equals" id="equals">=</button>
+    </div>
+
+    <div class="warning" id="warning"></div>
+  </div>
+
+<script>
+  const expressionEl = document.getElementById("expression");
+  const resultEl = document.getElementById("result");
+  const warningEl = document.getElementById("warning");
+
+  let expression = "";
+  let lastWasNumber = false;
+  let lastWasOperator = false;
+
+  function render() {
+    expressionEl.textContent = expression;
+    resultEl.textContent = expression === "" ? "0" : expression;
+  }
+
+  function setWarning(msg) {
+    warningEl.textContent = msg;
+  }
+
+  function appendText(text) {
+    setWarning("");
+    expression += text;
+    lastWasNumber = /[0-9.)]$/.test(expression);
+    lastWasOperator = false;
+    render();
+  }
+
+  function handleNum(num) {
+    if (num === "." && lastWasNumber && /\.\d*$/.test(expression.split(/[+\-×÷^()]/).pop())) {
+      setWarning("Already a decimal point");
+      return;
+    }
+    appendText(num);
+  }
+
+  function handleOperator(op) {
+    if (expression === "" || lastWasOperator) {
+      setWarning("Enter a number first");
+      return;
+    }
+    appendText(" " + op + " ");
+    lastWasOperator = true;
+  }
+
+  function handleFunction(fn) {
+    switch (fn) {
+      case "π":
+        appendText("3.1415926536");
+        break;
+      case "e":
+        appendText("2.7182818285");
+        break;
+      default:
+        appendText(fn + "(");
+    }
+  }
+
+  function evaluate() {
+    if (expression === "") return;
+    try {
+      let expr = expression
+        .replace(/×/g, "*")
+        .replace(/÷/g, "/")
+        .replace(/sin\(/g, "Math.sin(")
+        .replace(/cos\(/g, "Math.cos(")
+        .replace(/tan\(/g, "Math.tan(")
+        .replace(/ln\(/g, "Math.log(")
+        .replace(/log\(/g, "Math.log10(")
+        .replace(/√\(/g, "Math.sqrt(")
+        .replace(/x\^y\(/g, "")
+        .replace(/\^/g, "**")
+        .replace(/x²\(/g, "")
+        .replace(/²/g, "**2")
+        .replace(/n!\(/g, "");
+
+      if (expr.includes("!")) {
+        expr = expr.replace(/(\d+)!/g, "factorial($1)");
+      }
+
+      let result = Function("factorial", '"use strict"; return (' + expr + ")")(factorial);
+      if (typeof result !== "number" || !isFinite(result)) {
+        throw new Error("NaN");
+      }
+      result = parseFloat(result.toPrecision(12));
+      expression = String(result);
+      lastWasNumber = true;
+      lastWasOperator = false;
+      setWarning("");
+      render();
+    } catch (err) {
+      setWarning("Invalid expression");
+    }
+  }
+
+  function factorial(n) {
+    if (n < 0) return NaN;
+    if (n === 0 || n === 1) return 1;
+    if (!Number.isInteger(n)) return gamma(n + 1);
+    let total = 1;
+    for (let i = 2; i <= n; i++) total *= i;
+    return total;
+  }
+
+  function gamma(z) {
+    const g = 7;
+    const C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+      771.32342877765313, -176.61502916214059, 12.507343278686905,
+      -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    if (z < 0.5) return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
+    z -= 1;
+    let x = C[0];
+    for (let i = 1; i < g + 2; i++) x += C[i] / (z + i);
+    const t = z + g + 0.5;
+    return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+  }
+
+  function handlePower(kind) {
+    if (kind === "x²") {
+      appendText("²");
+      return;
+    }
+    if (kind === "x^y") {
+      if (expression === "" || lastWasOperator) {
+        setWarning("Enter a number first");
+        return;
+      }
+      appendText(" ^ ");
+      lastWasOperator = true;
+      return;
+    }
+    if (kind === "n!") {
+      if (expression === "" || lastWasOperator) {
+        setWarning("Enter a number first");
+        return;
+      }
+      appendText("!");
+      return;
+    }
+    if (kind === "√") {
+      appendText("√(");
+    }
+  }
+
+  function clearAll() {
+    expression = "";
+    setWarning("");
+    render();
+  }
+
+  function backspace() {
+    setWarning("");
+    let e = expression;
+    if (/ [+\-×÷^] $/.test(e)) {
+      expression = e.slice(0, -3);
+    } else if (/(sin|cos|tan|log|sqrt)\($/.test(e)) {
+      expression = e.slice(0, -e.match(/(sin|cos|tan|log|sqrt)\($/)[0].length);
+    } else if (e.endsWith("ln(") || e.endsWith("n!") || e.endsWith("²")) {
+      expression = e.slice(0, -1);
+      if (e.endsWith("ln(")) expression = e.slice(0, -2);
+    } else {
+      expression = e.slice(0, -1);
+    }
+    lastWasNumber = /[0-9.)]$/.test(expression);
+    lastWasOperator = false;
+    render();
+  }
+
+  document.querySelectorAll("[data-num]").forEach(btn => {
+    btn.addEventListener("click", () => handleNum(btn.dataset.num));
+  });
+
+  document.querySelectorAll("[data-op]").forEach(btn => {
+    btn.addEventListener("click", () => handleOperator(btn.dataset.op));
+  });
+
+  document.querySelectorAll("[data-fn]").forEach(btn => {
+    const fn = btn.dataset.fn;
+    if (fn === "x²" || fn === "x^y" || fn === "n!" || fn === "√") {
+      btn.addEventListener("click", () => handlePower(fn));
+    } else {
+      btn.addEventListener("click", () => handleFunction(fn));
+    }
+  });
+
+  document.getElementById("clear").addEventListener("click", clearAll);
+  document.getElementById("backspace").addEventListener("click", backspace);
+  document.getElementById("equals").addEventListener("click", evaluate);
+
+  document.addEventListener("keydown", e => {
+    if (/[0-9.]/.test(e.key)) handleNum(e.key);
+    else if ("+-*/".includes(e.key)) handleOperator(e.key === "*" ? "×" : e.key === "/" ? "÷" : e.key);
+    else if (e.key === "(" || e.key === ")") appendText(e.key);
+    else if (e.key === "Enter" || e.key === "=") { e.preventDefault(); evaluate(); }
+    else if (e.key === "Backspace") backspace();
+    else if (e.key === "Escape") clearAll();
+  });
+
+  render();
+</script>
+</body>
+</html>
