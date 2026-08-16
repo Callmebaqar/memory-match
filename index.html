@@ -22,6 +22,11 @@
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
   }
 
   @keyframes gradient {
@@ -129,6 +134,7 @@
   .card {
     perspective: 600px;
     cursor: pointer;
+    touch-action: manipulation;
   }
 
   .card-inner {
@@ -284,6 +290,56 @@
 
   .menu-btn.current {
     outline: 3px solid #764ba2;
+  }
+
+  @media (max-width: 640px) {
+    body {
+      padding: 12px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+    }
+
+    .board {
+      gap: 8px;
+    }
+
+    .face {
+      border-radius: 10px;
+      font-size: clamp(20px, 6vw, 34px);
+    }
+
+    .face.front {
+      font-size: clamp(14px, 4vw, 24px);
+    }
+
+    .stat {
+      padding: 7px 12px;
+      font-size: 0.9rem;
+    }
+
+    button {
+      font-size: 0.85rem;
+      padding: 8px 14px;
+    }
+
+    .group-grid {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .menu-btn {
+      font-size: 0.8rem;
+    }
+
+    .box {
+      padding: 24px 20px;
+    }
+
+    .box h2 {
+      font-size: 1.6rem;
+    }
   }
 </style>
 </head>
