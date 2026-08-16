@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My To-Do List</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
+    min-height: 100vh;
+    color: #fff;
+    padding: 24px;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .stat {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+  }
+
+  .stat .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.85;
+    margin-right: 5px;
+  }
+
+  .progress {
+    width: 100%;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4caf50, #ffd23f);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  .add-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .add-form input {
+    flex: 1;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 30px;
+    background: #ffd23f;
+    color: #1a1a2e;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .filters button {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+  }
+
+  .filters button.active {
+    background: #ffd23f;
+    color: #1a1a2e;
+  }
+
+  .list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .item {
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a2e;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    animation: slide-in 0.25s ease backwards;
+  }
+
+  @keyframes slide-in {
+    0% { opacity: 0; transform: translateY(-6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .item.completed .text {
+    text-decoration: line-through;
+    opacity: 0.55;
+  }
+
+  .check {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid #764ba2;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: transparent;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .item.completed .check {
+    background: #4caf50;
+    border-color: #4caf50;
+    color: #fff;
+  }
+
+  .text {
+    flex: 1;
+    font-size: 1.02rem;
+    word-break: break-word;
+  }
+
+  .text input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1.02rem;
+    padding: 4px 8px;
+    border: 2px solid #764ba2;
+    border-radius: 8px;
+    outline: none;
+  }
+
+  .actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .actions button {
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    border-radius: 10px;
+    background: #eceaf6;
+    color: #333;
+  }
+
+  .actions .edit-btn:hover { background: #667eea; color: #fff; }
+  .actions .del-btn:hover { background: #f44336; color: #fff; }
+
+  .empty {
+    text-align: center;
+    padding: 40px 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+  }
+
+  .clear-row {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .clear-row button {
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    font-size: 0.85rem;
+    padding: 10px 18px;
+  }
+
+  .clear-row button:hover {
+    background: #f44336;
+    color: #fff;
+  }
+
+  @media (max-width: 520px) {
+    body {
+      padding: 14px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+    }
+
+    .add-form {
+      flex-direction: column;
+    }
+
+    .add-form button {
+      width: 100%;
+    }
+
+    .actions button {
+      padding: 6px 9px;
+      font-size: 0.72rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>📝 My To-Do List</h1>
+      <div class="stats">
+        <div class="stat"><span class="label">Total</span><span id="stat-total">0</span></div>
+        <div class="stat"><span class="label">Done</span><span id="stat-done">0</span></div>
+        <div class="stat"><span class="label">Left</span><span id="stat-left">0</span></div>
+      </div>
+      <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+    </header>
+
+    <form class="add-form" id="add-form">
+      <input type="text" id="task-input" placeholder="Add a new task..." maxlength="200" autocomplete="off">
+      <button type="submit">➕ Add Task</button>
+    </form>
+
+    <div class="filters">
+      <button data-filter="all" class="active">All</button>
+      <button data-filter="active">Active</button>
+      <button data-filter="completed">Completed</button>
+    </div>
+
+    <ul class="list" id="list"></ul>
+    <p class="empty hidden" id="empty">No tasks yet — add one above! 🎉</p>
+
+    <div class="clear-row">
+      <button id="clear-completed">🗑️ Clear Completed</button>
+    </div>
+  </div>
+
+<script>
+const STORAGE_KEY = "todo-tasks";
+
+let tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+let filter = "all";
+
+const list = document.getElementById("list");
+const empty = document.getElementById("empty");
+const addForm = document.getElementById("add-form");
+const taskInput = document.getElementById("task-input");
+const progressFill = document.getElementById("progress-fill");
+const statTotal = document.getElementById("stat-total");
+const statDone = document.getElementById("stat-done");
+const statLeft = document.getElementById("stat-left");
+const clearCompletedBtn = document.getElementById("clear-completed");
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+function visibleTasks() {
+  if (filter === "active") return tasks.filter((t) => !t.done);
+  if (filter === "completed") return tasks.filter((t) => t.done);
+  return tasks;
+}
+
+function render() {
+  const shown = visibleTasks();
+  list.innerHTML = "";
+
+  shown.forEach((task) => {
+    const li = document.createElement("li");
+    li.className = "item" + (task.done ? " completed" : "");
+
+    const check = document.createElement("button");
+    check.className = "check";
+    check.textContent = "✓";
+    check.setAttribute("aria-label", task.done ? "Mark as active" : "Mark as complete");
+    check.addEventListener("click", () => {
+      task.done = !task.done;
+      save();
+      render();
+    });
+
+    const text = document.createElement("span");
+    text.className = "text";
+    text.textContent = task.text;
+    text.addEventListener("dblclick", () => startEdit(li, task, text));
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-btn";
+    editBtn.textContent = "✏️ Edit";
+    editBtn.addEventListener("click", () => startEdit(li, task, text));
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "del-btn";
+    delBtn.textContent = "🗑️";
+    delBtn.setAttribute("aria-label", "Delete task");
+    delBtn.addEventListener("click", () => {
+      tasks = tasks.filter((t) => t !== task);
+      save();
+      render();
+    });
+
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+
+    li.appendChild(check);
+    li.appendChild(text);
+    li.appendChild(actions);
+    list.appendChild(li);
+  });
+
+  const done = tasks.filter((t) => t.done).length;
+  statTotal.textContent = tasks.length;
+  statDone.textContent = done;
+  statLeft.textContent = tasks.length - done;
+  progressFill.style.width = tasks.length ? (done / tasks.length * 100) + "%" : "0%";
+  empty.classList.toggle("hidden", tasks.length > 0);
+  empty.textContent = filter === "completed"
+    ? "No completed tasks yet."
+    : filter === "active"
+      ? "No active tasks — you're all done! 🎉"
+      : "No tasks yet — add one above! 🎉";
+}
+
+function startEdit(li, task, textEl) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = task.text;
+  input.maxLength = 200;
+
+  const apply = () => {
+    const value = input.value.trim();
+    if (value) {
+      task.text = value;
+      save();
+    }
+    render();
+  };
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") apply();
+    if (e.key === "Escape") render();
+  });
+  input.addEventListener("blur", apply);
+
+  textEl.replaceWith(input);
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
+}
+
+addForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const value = taskInput.value.trim();
+  if (!value) return;
+  tasks.unshift({ text: value, done: false });
+  taskInput.value = "";
+  save();
+  render();
+});
+
+document.querySelectorAll(".filters button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filters button").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    filter = btn.dataset.filter;
+    render();
+  });
+});
+
+clearCompletedBtn.addEventListener("click", () => {
+  tasks = tasks.filter((t) => !t.done);
+  save();
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
