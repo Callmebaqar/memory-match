@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Form</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #0f3443, #34e89e);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
+    min-height: 100vh;
+    color: #fff;
+    padding: 24px;
+    touch-action: manipulation;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  header p {
+    margin-top: 6px;
+    opacity: 0.9;
+    font-size: 1rem;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.97);
+    color: #1a1a2e;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    animation: slide-in 0.4s ease backwards;
+  }
+
+  @keyframes slide-in {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: #444;
+  }
+
+  .field label .req {
+    color: #e53935;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #e2e0ee;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #faf9ff;
+    color: #1a1a2e;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: #0f3443;
+    box-shadow: 0 0 0 3px rgba(15, 52, 67, 0.18);
+    background: #fff;
+  }
+
+  .field.invalid input,
+  .field.invalid select,
+  .field.invalid textarea {
+    border-color: #e53935;
+    background: #fff5f5;
+  }
+
+  .field .error {
+    display: none;
+    color: #e53935;
+    font-size: 0.82rem;
+    margin-top: 5px;
+  }
+
+  .field.invalid .error {
+    display: block;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    flex: 1;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #0f3443, #34e89e);
+    color: #fff;
+  }
+
+  .btn-reset {
+    background: #eceaf6;
+    color: #333;
+  }
+
+  .btn-reset:hover {
+    background: #ffd23f;
+    color: #1a1a2e;
+  }
+
+  .success {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #e8f7ee;
+    border: 2px solid #4caf50;
+    color: #2e7d32;
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-weight: 600;
+    margin-top: 18px;
+    animation: slide-in 0.3s ease backwards;
+  }
+
+  .success.show {
+    display: flex;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Contact Us</h1>
+      <p>We would love to hear from you</p>
+    </header>
+
+    <div class="card">
+      <form id="contactForm" novalidate>
+        <div class="field" id="f-name">
+          <label for="name">Full Name <span class="req">*</span></label>
+          <input type="text" id="name" placeholder="Enter your full name">
+          <div class="error">Please enter your name</div>
+        </div>
+
+        <div class="field" id="f-email">
+          <label for="email">Email <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="you@example.com">
+          <div class="error">Please enter a valid email</div>
+        </div>
+
+        <div class="field" id="f-subject">
+          <label for="subject">Subject</label>
+          <select id="subject">
+            <option value="">Select a topic</option>
+            <option value="general">General Question</option>
+            <option value="feedback">Feedback</option>
+            <option value="support">Support</option>
+            <option value="bug">Bug Report</option>
+          </select>
+          <div class="error">Please choose a subject</div>
+        </div>
+
+        <div class="field" id="f-message">
+          <label for="message">Message <span class="req">*</span></label>
+          <textarea id="message" rows="5" placeholder="Type your message here"></textarea>
+          <div class="error">Please enter a message</div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn-reset" id="resetBtn">Reset</button>
+          <button type="submit" class="btn-submit" id="submitBtn">Send Message</button>
+        </div>
+      </form>
+
+      <div class="success" id="successMsg">
+        <span>&#10004;</span> Message sent! Thank you for contacting us.
+      </div>
+    </div>
+  </div>
+
+<script>
+  const form = document.getElementById("contactForm");
+  const successMsg = document.getElementById("successMsg");
+
+  const nameInput = document.getElementById("name");
+  const emailInput = document.getElementById("email");
+  const subjectInput = document.getElementById("subject");
+  const messageInput = document.getElementById("message");
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function setInvalid(fieldId, invalid) {
+    document.getElementById(fieldId).classList.toggle("invalid", invalid);
+  }
+
+  function validate() {
+    let valid = true;
+
+    const nameValid = nameInput.value.trim().length >= 2;
+    setInvalid("f-name", !nameValid);
+
+    const emailValid = emailRegex.test(emailInput.value.trim());
+    setInvalid("f-email", !emailValid);
+
+    const subjectValid = subjectInput.value !== "";
+    setInvalid("f-subject", !subjectValid);
+
+    const messageValid = messageInput.value.trim().length >= 5;
+    setInvalid("f-message", !messageValid);
+
+    return nameValid && emailValid && subjectValid && messageValid;
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    successMsg.classList.remove("show");
+    if (validate()) {
+      successMsg.classList.add("show");
+      form.reset();
+    }
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    form.reset();
+    successMsg.classList.remove("show");
+    ["f-name", "f-email", "f-subject", "f-message"].forEach(id => {
+      setInvalid(id, false);
+    });
+  });
+
+  [nameInput, emailInput, subjectInput, messageInput].forEach(input => {
+    input.addEventListener("input", () => {
+      successMsg.classList.remove("show");
+    });
+  });
+</script>
+</body>
+</html>
