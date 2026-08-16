@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Match</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 14px;
+    width: 100%;
+    max-width: 720px;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .badge {
+    display: inline-block;
+    margin: 10px 0 12px;
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .badge.easy { color: #b8f2c2; border: 2px solid #4caf50; }
+  .badge.medium { color: #ffe0a3; border: 2px solid #ff9800; }
+  .badge.hard { color: #ffb3b3; border: 2px solid #f44336; }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    background: rgba(0, 0, 0, 0.35);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 1rem;
+  }
+
+  .stat .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.85;
+    margin-right: 5px;
+  }
+
+  .progress {
+    width: 100%;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4caf50, #ffd23f, #f44336);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 30px;
+    background: #ffd23f;
+    color: #1a1a2e;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+
+  .board {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .card {
+    perspective: 600px;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    transform-style: preserve-3d;
+    transition: transform 0.4s;
+    animation: pop-in 0.4s ease backwards;
+  }
+
+  .card.flipped .card-inner,
+  .card.matched .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  @keyframes pop-in {
+    0% { transform: scale(0.6) rotateY(180deg); opacity: 0; }
+    100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-size: clamp(26px, 5vw, 42px);
+  }
+
+  .face.front {
+    background: linear-gradient(145deg, #667eea, #764ba2);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(18px, 4vw, 32px);
+    box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.2);
+  }
+
+  .face.back {
+    background: #fff;
+    transform: rotateY(180deg);
+    box-shadow: inset 0 0 0 3px #764ba2;
+  }
+
+  .card.matched .face.back {
+    background: #b8f2c2;
+    box-shadow: inset 0 0 0 3px #4caf50;
+  }
+
+  .card.matched {
+    pointer-events: none;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 20px;
+  }
+
+  .overlay.hidden {
+    display: none;
+  }
+
+  .box {
+    background: #fff;
+    color: #1a1a2e;
+    text-align: center;
+    padding: 32px 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    animation: pop-in 0.4s ease backwards;
+    max-width: 92vw;
+  }
+
+  .box h2 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .box p {
+    font-size: 1.05rem;
+    margin: 8px 0;
+    color: #444;
+  }
+
+  .box .btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-green {
+    background: #4caf50;
+    color: #fff;
+  }
+
+  .menu-box {
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px 28px;
+  }
+
+  .menu-box h2 {
+    margin-bottom: 6px;
+  }
+
+  .group {
+    margin-top: 16px;
+  }
+
+  .group h3 {
+    text-align: left;
+    color: #333;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  .group-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+  }
+
+  .menu-btn {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: none;
+    background: #eceaf6;
+    color: #333;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.1s;
+  }
+
+  .menu-btn:hover {
+    transform: scale(1.08);
+  }
+
+  .menu-btn.completed {
+    background: #4caf50;
+    color: #fff;
+  }
+
+  .menu-btn.current {
+    outline: 3px solid #764ba2;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <h1>🧠 Memory Match</h1>
+    <div><span class="badge easy" id="level-badge">Level 1 • Easy</span></div>
+    <div class="stats">
+      <div class="stat"><span class="label">Moves</span><span id="moves">0</span></div>
+      <div class="stat"><span class="label">Time</span><span id="time">0:00</span></div>
+      <button id="levels-btn">🗺️ Levels</button>
+      <button id="restart">🔄 Restart</button>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+  </header>
+
+  <main class="board" id="board"></main>
+
+  <div class="overlay hidden" id="win-overlay">
+    <div class="box">
+      <h2 id="win-title">🎉 Level Complete!</h2>
+      <p id="win-sub"></p>
+      <p id="win-stats"></p>
+      <div class="btn-row">
+        <button class="btn-green" id="next-level">Next Level ▶</button>
+        <button id="win-levels">🗺️ Levels</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="menu-overlay">
+    <div class="box menu-box">
+      <h2>🗺️ Select Level</h2>
+      <p>Green = completed</p>
+      <div id="menu-groups"></div>
+      <div class="btn-row">
+        <button id="menu-close">✕ Close</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const LEVELS = [
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🐟", "🐠", "🐡", "🦀", "🐙"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🐮", "🐷", "🐔", "🐑", "🐴"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🍎", "🍌", "🍇", "🍓", "🍉"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🦜", "🦉", "🦆", "🦢", "🐧"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🚗", "🚌", "🚑", "🚒", "🚜"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🦋", "🐝", "🐞", "🐛", "🦗"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🎈", "🧸", "🪁", "🤖", "🎠"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["☀️", "🌧️", "❄️", "🌈", "⛈️"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🌍", "🚀", "⭐", "🌙", "🪐"] },
+  { pairs: 5, cols: 5, name: "Easy", emojis: ["🍩", "🍪", "🍰", "🧁", "🍦"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["🍕", "🍔", "🍟", "🌭", "🥪", "🌮", "🍣"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["🥤", "🧃", "🍹", "☕", "🍵", "🍺", "🥂"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["📱", "💻", "⌚", "🎧", "📷", "🎮", "🔋"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🏉"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["👕", "👖", "👗", "🧥", "🧢", "👒", "🧦"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["🔨", "🪛", "🔧", "🪚", "🔩", "🗜️", "🛠️"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["📚", "📖", "✏️", "✂️", "📏", "🎒", "🖍️"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["🎵", "🎸", "🎹", "🥁", "🎻", "🎺", "🪕"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["🦁", "🐯", "🐼", "🦊", "🐻", "🐨", "🦄"] },
+  { pairs: 7, cols: 7, name: "Medium", emojis: ["🍳", "🍴", "🔪", "🥄", "🍽️", "🍶", "🥣"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["🐶", "🐱", "🐰", "🐹", "🐭", "🐸", "🦎", "🐢", "🐦", "🐺"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["🍎", "🍌", "🍇", "🍓", "🍉", "🍊", "🥝", "🥑", "🍅", "🥦"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["😀", "😃", "😄", "😁", "😆", "😂", "🤣", "😊", "😍", "😎"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["👆", "👇", "👈", "👉", "👋", "🤙", "🖐️", "✌️", "🤞", "👍"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "💖", "💕"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["♥️", "♦️", "♣️", "♠️", "🎲", "🎯", "🎴", "🃏", "🀄", "🎰"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["🔑", "📱", "💡", "📷", "⌚", "🎧", "💻", "🖥️", "🔋", "🔌"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["🍔", "🍕", "🌮", "🍜", "🍝", "🥗", "🍣", "🍤", "🍩", "🍪"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["🏊", "🚴", "🏋️", "⛹️", "🤸", "🧗", "🛹", "🏹", "⛸️", "🥋"] },
+  { pairs: 10, cols: 5, name: "Hard", emojis: ["🦋", "🐝", "🪰", "🦟", "🕷️", "🐌", "🦐", "🦞", "🦀", "🦑"] }
+];
+
+const board = document.getElementById("board");
+const levelBadge = document.getElementById("level-badge");
+const movesEl = document.getElementById("moves");
+const timeEl = document.getElementById("time");
+const progressFill = document.getElementById("progress-fill");
+const restartBtn = document.getElementById("restart");
+const levelsBtn = document.getElementById("levels-btn");
+const winOverlay = document.getElementById("win-overlay");
+const winTitle = document.getElementById("win-title");
+const winSub = document.getElementById("win-sub");
+const winStats = document.getElementById("win-stats");
+const nextLevelBtn = document.getElementById("next-level");
+const winLevelsBtn = document.getElementById("win-levels");
+const menuOverlay = document.getElementById("menu-overlay");
+const menuGroups = document.getElementById("menu-groups");
+const menuCloseBtn = document.getElementById("menu-close");
+
+let currentLevel = 1;
+let completed = new Set();
+let flipped = [];
+let matchedPairs = 0;
+let moves = 0;
+let locked = false;
+let timer = null;
+let seconds = 0;
+let started = false;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildDeck() {
+  const level = LEVELS[currentLevel - 1];
+  const chosen = shuffle(level.emojis);
+  const deck = shuffle([...chosen, ...chosen]);
+
+  board.style.gridTemplateColumns = "repeat(" + level.cols + ", 1fr)";
+  board.style.maxWidth = Math.min(720, level.cols * 100) + "px";
+
+  board.innerHTML = "";
+  deck.forEach((emoji, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.emoji = emoji;
+    card.style.animationDelay = (i * 25) + "ms";
+    card.innerHTML =
+      '<div class="card-inner">' +
+        '<div class="face front">?</div>' +
+        '<div class="face back">' + emoji + '</div>' +
+      '</div>';
+    board.appendChild(card);
+  });
+}
+
+function updateHeader() {
+  const level = LEVELS[currentLevel - 1];
+  levelBadge.textContent = "Level " + currentLevel + " • " + level.name;
+  levelBadge.className = "badge " + level.name.toLowerCase();
+  progressFill.style.width = (currentLevel / 30 * 100) + "%";
+}
+
+function startLevel(n) {
+  clearInterval(timer);
+  flipped = [];
+  matchedPairs = 0;
+  moves = 0;
+  locked = false;
+  started = false;
+  seconds = 0;
+  currentLevel = n;
+  updateTime();
+  updateMoves();
+  updateHeader();
+  winOverlay.classList.add("hidden");
+  buildDeck();
+}
+
+function startTimer() {
+  if (started) return;
+  started = true;
+  timer = setInterval(() => {
+    seconds++;
+    updateTime();
+  }, 1000);
+}
+
+function updateTime() {
+  const m = Math.floor(seconds / 60);
+  const s = String(seconds % 60).padStart(2, "0");
+  timeEl.textContent = m + ":" + s;
+}
+
+function updateMoves() {
+  movesEl.textContent = moves;
+}
+
+function checkMatch() {
+  const [a, b] = flipped;
+  if (a.dataset.emoji === b.dataset.emoji) {
+    a.classList.add("matched");
+    b.classList.add("matched");
+    matchedPairs++;
+    playMatch();
+    flipped = [];
+    if (matchedPairs === LEVELS[currentLevel - 1].pairs) win();
+  } else {
+    locked = true;
+    playMismatch();
+    setTimeout(() => {
+      a.classList.remove("flipped");
+      b.classList.remove("flipped");
+      flipped = [];
+      locked = false;
+    }, 800);
+  }
+}
+
+function win() {
+  clearInterval(timer);
+  locked = true;
+  playWin();
+  completed.add(currentLevel);
+
+  const level = LEVELS[currentLevel - 1];
+  if (currentLevel === 30) {
+    winTitle.textContent = "🏆 You Beat The Game!";
+    winSub.textContent = "All 30 levels complete — amazing memory!";
+    nextLevelBtn.textContent = "Play Level 1";
+  } else {
+    winTitle.textContent = "🎉 Level " + currentLevel + " Complete!";
+    winSub.textContent = level.name + " • Next up: Level " + (currentLevel + 1);
+    nextLevelBtn.textContent = "Next Level ▶";
+  }
+
+  const m = Math.floor(seconds / 60);
+  const s = String(seconds % 60).padStart(2, "0");
+  winStats.textContent = "Moves: " + moves + "  •  Time: " + m + ":" + s;
+
+  setTimeout(() => winOverlay.classList.remove("hidden"), 600);
+}
+
+function renderMenu() {
+  const names = ["Easy", "Medium", "Hard"];
+  menuGroups.innerHTML = "";
+  names.forEach((name, g) => {
+    const group = document.createElement("div");
+    group.className = "group";
+    const h3 = document.createElement("h3");
+    h3.textContent = name + " — Levels " + (g * 10 + 1) + " to " + (g * 10 + 10);
+    group.appendChild(h3);
+
+    const grid = document.createElement("div");
+    grid.className = "group-grid";
+    for (let i = g * 10; i < g * 10 + 10; i++) {
+      const btn = document.createElement("button");
+      btn.className = "menu-btn";
+      btn.textContent = i + 1;
+      btn.dataset.level = i + 1;
+      btn.addEventListener("click", () => {
+        startLevel(i + 1);
+        menuOverlay.classList.add("hidden");
+      });
+      grid.appendChild(btn);
+    }
+    group.appendChild(grid);
+    menuGroups.appendChild(group);
+  });
+}
+
+function refreshMenu() {
+  const btns = menuGroups.querySelectorAll(".menu-btn");
+  btns.forEach((btn) => {
+    const n = Number(btn.dataset.level);
+    btn.classList.toggle("completed", completed.has(n));
+    btn.classList.toggle("current", n === currentLevel);
+  });
+}
+
+board.addEventListener("click", (e) => {
+  const card = e.target.closest(".card");
+  if (!card || locked) return;
+  if (card.classList.contains("flipped")) return;
+
+  startTimer();
+  card.classList.add("flipped");
+  playFlip();
+  flipped.push(card);
+
+  if (flipped.length === 2) {
+    moves++;
+    updateMoves();
+    checkMatch();
+  }
+});
+
+restartBtn.addEventListener("click", () => startLevel(currentLevel));
+
+levelsBtn.addEventListener("click", () => {
+  refreshMenu();
+  menuOverlay.classList.remove("hidden");
+});
+
+menuCloseBtn.addEventListener("click", () => {
+  menuOverlay.classList.add("hidden");
+});
+
+nextLevelBtn.addEventListener("click", () => {
+  winOverlay.classList.add("hidden");
+  if (currentLevel === 30) startLevel(1);
+  else startLevel(currentLevel + 1);
+});
+
+winLevelsBtn.addEventListener("click", () => {
+  winOverlay.classList.add("hidden");
+  refreshMenu();
+  menuOverlay.classList.remove("hidden");
+});
+
+let audioCtx = null;
+function getCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function tone(freq, duration, delay) {
+  const ctx = getCtx();
+  const t = ctx.currentTime + delay;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(0.15, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + duration + 0.05);
+}
+
+function playFlip() {
+  tone(350, 0.1, 0);
+  tone(520, 0.08, 0.05);
+}
+
+function playMismatch() {
+  tone(300, 0.12, 0);
+  tone(220, 0.12, 0.12);
+}
+
+function playMatch() {
+  tone(523.25, 0.15, 0);
+  tone(659.25, 0.15, 0.12);
+}
+
+function playWin() {
+  const notes = [523.25, 659.25, 783.99, 1046.5];
+  notes.forEach((n, i) => tone(n, 0.3, i * 0.18));
+}
+
+renderMenu();
+startLevel(1);
+</script>
+</body>
+</html>
