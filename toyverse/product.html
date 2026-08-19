@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToyVerse - Product Detail</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="announcement-bar">
+  <span>&#127881; Free Shipping on Orders Over Rs 5,000!</span> | <span>&#128230; Same-Day Delivery in Karachi, Lahore &amp; Islamabad</span> | <span>&#127873; Use Code TOYVERSE10 for 10% Off</span>
+</div>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <button class="mobile-toggle" aria-label="Menu">&#9776;</button>
+    <a href="index.html" class="logo"><span class="icon">&#129528;</span> ToyVerse</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="new-arrivals.html">New Arrivals</a></li>
+      <li><a href="deals.html">Deals</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="search-bar">
+      <input type="text" placeholder="Search toys, categories...">
+      <button>&#128269;</button>
+    </div>
+    <div class="nav-icons">
+      <button class="nav-icon" title="Wishlist" onclick="location.href='wishlist.html'">&#9825;<span class="badge wishlist-badge">0</span></button>
+      <button class="nav-icon" title="Cart" onclick="location.href='cart.html'">&#128722;<span class="badge cart-badge">0</span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-content">
+    <button class="mobile-menu-close">&times;</button>
+    <ul class="mobile-nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="new-arrivals.html">New Arrivals</a></li>
+      <li><a href="deals.html">Deals</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="wishlist.html">Wishlist</a></li>
+      <li><a href="cart.html">Cart</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="breadcrumbs">
+  <a href="index.html">Home</a><span class="sep">&rsaquo;</span>
+  <a href="categories.html" id="bc-category">Category</a><span class="sep">&rsaquo;</span>
+  <span id="bc-product">Product</span>
+</div>
+
+<section class="product-section">
+  <div class="product-gallery">
+    <div class="main-image" id="mainImage">&#129528;</div>
+    <div class="thumbnails" id="thumbnails"></div>
+  </div>
+  <div class="product-info">
+    <span class="category-tag" id="p-category">Category</span>
+    <h1 id="p-name">Product Name</h1>
+    <div class="rating">
+      <span class="stars" id="p-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+      <span class="count" id="p-reviews">(0 reviews)</span>
+    </div>
+    <div class="price-block">
+      <span class="price" id="p-price">Rs 0</span>
+      <span class="old-price" id="p-old-price"></span>
+      <span class="discount-badge" id="p-discount"></span>
+    </div>
+    <div class="availability" id="p-availability"></div>
+    <table class="specs-table" id="specs-table">
+      <tr><td>Age Range</td><td id="spec-age">-</td></tr>
+      <tr><td>Material</td><td id="spec-material">-</td></tr>
+      <tr><td>Brand</td><td id="spec-brand">-</td></tr>
+      <tr><td>Country of Origin</td><td id="spec-country">-</td></tr>
+      <tr><td>Quality</td><td id="spec-quality">-</td></tr>
+    </table>
+    <div style="margin-top:16px;font-weight:700;margin-bottom:8px;">Quantity</div>
+    <div class="quantity-selector">
+      <button onclick="changeQty(-1)">&#8722;</button>
+      <input type="text" class="qty-val" id="qty-input" value="1" readonly>
+      <button onclick="changeQty(1)">+</button>
+    </div>
+    <div class="action-buttons">
+      <button class="btn btn-primary" onclick="doAddToCart()">&#128722; Add to Cart</button>
+      <button class="btn btn-secondary" onclick="doBuyNow()">&#9889; Buy Now</button>
+      <button class="btn btn-wishlist" id="wishlist-btn" onclick="doToggleWishlist()">&#9825; Wishlist</button>
+    </div>
+  </div>
+</section>
+
+<section class="tabs-section">
+  <div class="tabs-header">
+    <button class="tab-btn active" data-tab="description">Description</button>
+    <button class="tab-btn" data-tab="features">Features</button>
+    <button class="tab-btn" data-tab="safety">Safety Info</button>
+    <button class="tab-btn" data-tab="reviews">Reviews</button>
+  </div>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab-description"></div>
+    <div class="tab-pane" id="tab-features"></div>
+    <div class="tab-pane" id="tab-safety"></div>
+    <div class="tab-pane" id="tab-reviews"></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-heading">Related Products</h2>
+  <div class="products-grid" id="related-products"></div>
+</section>
+
+<section class="newsletter">
+  <h2>Stay in the Loop!</h2>
+  <p>Get the latest toy arrivals, deals, and parenting tips delivered to your inbox.</p>
+  <form class="newsletter-form" onsubmit="alert('Thanks for subscribing!');return false;">
+    <input type="email" placeholder="Enter your email address" required>
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo"><span class="icon">&#129528;</span> ToyVerse</div>
+      <p>Pakistan&#39;s trusted online toy store. Safe, fun, and educational toys for every child. Quality you can trust, prices you&#39;ll love.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="shipping.html">Shipping Policy</a></li>
+        <li><a href="returns.html">Returns</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="categories.html">Stuffed Animals</a></li>
+        <li><a href="categories.html">Building Toys</a></li>
+        <li><a href="categories.html">Educational</a></li>
+        <li><a href="categories.html">Remote Control</a></li>
+        <li><a href="categories.html">Pretend Play</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact Info</h4>
+      <ul>
+        <li>&#128205; Plot 42, Gulshan-e-Iqbal, Karachi</li>
+        <li>&#128222; +92 300 1234567</li>
+        <li>&#128231; info@toyverse.pk</li>
+        <li>&#128336; Mon - Sat: 9AM - 9PM</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 ToyVerse. All rights reserved. Made with &#10084; in Pakistan.</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var id=parseInt(params.get('id'))||1;
+  var product=getProductById(id);
+  if(!product){product=PRODUCTS[0];id=product.id;}
+  document.title='ToyVerse - '+product.name;
+  document.getElementById('bc-category').textContent=product.category;
+  document.getElementById('bc-product').textContent=product.name;
+  document.getElementById('p-category').textContent=product.category;
+  document.getElementById('p-name').textContent=product.name;
+  document.getElementById('mainImage').textContent=product.emoji;
+  document.getElementById('p-stars').textContent=renderStars(product.rating);
+  document.getElementById('p-reviews').textContent='('+product.reviewCount+' reviews)';
+  document.getElementById('p-price').textContent=formatPrice(product.price);
+  var discount=Math.round((1-product.price/product.oldPrice)*100);
+  document.getElementById('p-old-price').textContent=formatPrice(product.oldPrice);
+  document.getElementById('p-discount').textContent='-'+discount+'%';
+  document.getElementById('spec-age').textContent=product.age;
+  document.getElementById('spec-material').textContent=product.material;
+  document.getElementById('spec-brand').textContent=product.brand;
+  document.getElementById('spec-country').textContent=product.country;
+  document.getElementById('spec-quality').textContent=product.quality;
+  document.getElementById('p-availability').innerHTML=product.inStock?'<span class="in-stock">&#10003; In Stock</span>':'<span class="out-stock">&#10007; Out of Stock</span>';
+  var thumbs=document.getElementById('thumbnails');
+  var emojis=[product.emoji,'\u2b50','\ud83d\udce6','\ud83d\udd14','\ud83c\udfaf'];
+  emojis.forEach(function(e,i){
+    var d=document.createElement('div');
+    d.className='thumb'+(i===0?' active':'');
+    d.textContent=e;
+    d.onclick=function(){
+      document.getElementById('mainImage').textContent=e;
+      thumbs.querySelectorAll('.thumb').forEach(function(t){t.classList.remove('active')});
+      d.classList.add('active');
+    };
+    thumbs.appendChild(d);
+  });
+  document.getElementById('tab-description').innerHTML='<p>'+product.description+'</p>';
+  var featHtml='<ul>';
+  product.features.forEach(function(f){featHtml+='<li>'+f+'</li>'});
+  featHtml+='</ul>';
+  document.getElementById('tab-features').innerHTML=featHtml;
+  document.getElementById('tab-safety').innerHTML='<p>'+product.safetyInfo+'</p>';
+  var reviewsHtml='';
+  product.reviews.forEach(function(r){
+    reviewsHtml+='<div class="review-card"><div class="review-header"><div class="review-avatar">'+r.avatar+'</div><div class="review-meta"><div class="name">'+r.name+'</div><div class="date">'+r.date+'</div></div><div class="review-stars">'+renderStars(r.stars)+'</div></div><div class="review-text">'+r.text+'</div></div>';
+  });
+  document.getElementById('tab-reviews').innerHTML=reviewsHtml;
+  var related=getRelatedProducts(product,4);
+  if(related.length<4){
+    PRODUCTS.filter(function(p){return p.id!==product.id}).forEach(function(p){
+      if(related.length<4 && related.indexOf(p)===-1) related.push(p);
+    });
+  }
+  var rpHtml='';
+  related.slice(0,4).forEach(function(rp){
+    rpHtml+='<div class="product-card" onclick="location.href=\'product.html?id='+rp.id+'\'"><div class="card-img">'+rp.emoji+'</div><div class="card-body"><div class="card-cat">'+rp.subcategory+'</div><div class="card-title">'+rp.name+'</div><div class="card-price">'+formatPrice(rp.price)+'<span class="card-old">'+formatPrice(rp.oldPrice)+'</span></div></div></div>';
+  });
+  document.getElementById('related-products').innerHTML=rpHtml;
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+      document.querySelectorAll('.tab-pane').forEach(function(p){p.classList.remove('active')});
+      btn.classList.add('active');
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+  var currentQty=1;
+  window.changeQty=function(d){
+    currentQty=Math.max(1,currentQty+d);
+    document.getElementById('qty-input').value=currentQty;
+  };
+  window.doAddToCart=function(){
+    addToCart(id,currentQty);
+    alert('Added '+currentQty+' x '+product.name+' to cart!');
+  };
+  window.doBuyNow=function(){
+    addToCart(id,currentQty);
+    location.href='cart.html';
+  };
+  window.doToggleWishlist=function(){
+    var added=toggleWishlist(id);
+    var btn=document.getElementById('wishlist-btn');
+    btn.innerHTML=added?'&#10084; Wishlisted':'&#9825; Wishlist';
+    btn.classList.toggle('active',added);
+  };
+  if(isInWishlist(id)){
+    var btn=document.getElementById('wishlist-btn');
+    btn.innerHTML='&#10084; Wishlisted';
+    btn.classList.add('active');
+  }
+})();
+</script>
+</body>
+</html>

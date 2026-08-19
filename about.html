@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    background-size: 400% 400%;
+    animation: gradient 12s ease infinite;
+    min-height: 100vh;
+    color: #fff;
+    padding: 24px;
+    touch-action: manipulation;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  header p {
+    margin-top: 8px;
+    opacity: 0.9;
+    font-size: 1.05rem;
+  }
+
+  .card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  }
+
+  .card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    font-size: 1rem;
+    line-height: 1.7;
+    opacity: 0.92;
+  }
+
+  .team {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .member {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 24px 18px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+
+  .member:hover {
+    transform: translateY(-4px);
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    margin: 0 auto 12px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .member h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .member .role {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+
+  .nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .nav-links a {
+    display: inline-block;
+    padding: 10px 22px;
+    border-radius: 30px;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.95rem;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .nav-links a:hover {
+    background: rgba(0, 0, 0, 0.55);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 500px) {
+    body { padding: 14px; }
+    header h1 { font-size: 1.6rem; }
+    .card { padding: 20px 18px; }
+    .team { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>About Us</h1>
+    <p>Humare baare mein jaaniye</p>
+  </header>
+
+  <div class="card">
+    <h2>Hamara Mission</h2>
+    <p>Hum creative aur interactive web experiences banane mein vishwaas rakhte hain. Hamara goal hai aapke liye simple, sundar aur useful tools banana jo aapki daily life ko asaan banayein.</p>
+  </div>
+
+  <div class="card">
+    <h2>Kya Karte Hain?</h2>
+    <p>Hum HTML, CSS aur JavaScript se banaye gaye projects par kaam karte hain — jaise games, calculators, forms, aur productivity tools. Sab kuch hand-crafted aur mobile-friendly hota hai.</p>
+  </div>
+
+  <div class="card">
+    <h2>Humari Team</h2>
+    <div class="team">
+      <div class="member">
+        <div class="avatar">👩‍💻</div>
+        <h3>Designer</h3>
+        <p class="role">UI/UX Design</p>
+      </div>
+      <div class="member">
+        <div class="avatar">👨‍💻</div>
+        <h3>Developer</h3>
+        <p class="role">Frontend Dev</p>
+      </div>
+      <div class="member">
+        <div class="avatar">🧪</div>
+        <h3>Tester</h3>
+        <p class="role">Quality Assurance</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Sampark Karein</h2>
+    <p>Koi sawaal ho ya feedback dena ho, toh humse juden. Hum aapki madad ke liye hamesha taiyaar hain!</p>
+  </div>
+
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+    <a href="todo.html">Todo</a>
+    <a href="calculator.html">Calculator</a>
+  </div>
+</div>
+
+</body>
+</html>
